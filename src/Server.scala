@@ -14,9 +14,9 @@ object Server extends App {
   val workerRouter = system.actorOf(
     Props[ClientActor].withRouter(RoundRobinRouter(NUM_OF_WORKERS)), name = "clientActor")
 
+  val socket = new ServerSocket(SERVER_PORT)
 
   while(true) {
-    val socket = new ServerSocket(SERVER_PORT)
     val s = socket.accept()
     workerRouter ! HTTPRequest(s)
   }
