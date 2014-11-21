@@ -1,9 +1,8 @@
-/**
- * Created by stan on 11/20/14.
- */
+import java.net.Socket
+
 sealed trait HTTPMessage
 
-case class HTTPRequest(body: String) extends HTTPRequest
+case class HTTPRequest(connection: Socket) extends HTTPMessage
 
-case class HTTPResponse(wordCount:Int, dictionary: String) extends HTTPRequest
+case class HTTPResponse(wordCount:Int, dictionary: String) extends HTTPMessage
 

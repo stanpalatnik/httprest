@@ -1,25 +1,23 @@
 import java.net.ServerSocket
-import java.util
 
+import akka.actor.{Props, ActorSystem}
+import akka.routing.RoundRobinRouter
 
-/**
- * Created by stan on 11/20/14.
- */
 object Server extends App {
   final val NUM_OF_WORKERS = 10
+  final val SERVER_PORT = 8082
   //keep an md5 hash of the request, to keep a cache
   //final val requestCache[] = mutable.Map
 
   val system = ActorSystem("restserver")
 
-  val workerRouter = context.actorOf(
+  val workerRouter = system.actorOf(
     Props[ClientActor].withRouter(RoundRobinRouter(NUM_OF_WORKERS)), name = "clientActor")
 
 
   while(true) {
-    val socket = new ServerSocket(80)
+    val socket = new ServerSocket(SERVER_PORT)
     val s = socket.accept()
-    val in = new BufferedSource(s.getInputStream()).getLines()
-    val out = new PrintStream(s.getOutputStream())
+    workerRouter ! HTTPRequest(s)
   }
 }
