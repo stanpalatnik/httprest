@@ -1,4 +1,5 @@
 import java.net.ServerSocket
+import java.util
 
 
 /**
@@ -6,6 +7,8 @@ import java.net.ServerSocket
  */
 object Server extends App {
   final val NUM_OF_WORKERS = 10
+  //keep an md5 hash of the request, to keep a cache
+  //final val requestCache[] = mutable.Map
 
   val system = ActorSystem("restserver")
 
