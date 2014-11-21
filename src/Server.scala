@@ -5,7 +5,7 @@ import akka.routing.RoundRobinRouter
 
 object Server extends App {
   final val NUM_OF_WORKERS = 10
-  final val SERVER_PORT = 8082
+  final val SERVER_PORT = 8083
   //keep an md5 hash of the request, to keep a cache
   //final val requestCache[] = mutable.Map
 

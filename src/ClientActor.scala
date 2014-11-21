@@ -11,7 +11,9 @@ class ClientActor extends Actor {
     case HTTPRequest(socket) => {
       val in = new BufferedSource(socket.getInputStream).getLines()
       val out = new PrintStream(socket.getOutputStream)
-      out.println("received: " + in.toStream)
+      val response = HTTPResponse(in)
+      out.println(response.response)
+      out.println(in.toStream)
       socket.close()
     }
   }
