@@ -1,13 +1,11 @@
 import java.net.ServerSocket
-
 import akka.actor.{Props, ActorSystem}
 import akka.routing.RoundRobinRouter
+import java.security.MessageDigest
 
 object Server extends App {
   final val NUM_OF_WORKERS = 10
   final val SERVER_PORT = 8083
-  //keep an md5 hash of the request, to keep a cache
-  //final val requestCache[] = mutable.Map
 
   val system = ActorSystem("restserver")
 
@@ -16,7 +14,7 @@ object Server extends App {
 
   val socket = new ServerSocket(SERVER_PORT)
 
-  while(true) {
+  while (true) {
     val s = socket.accept()
     workerRouter ! HTTPRequest(s)
   }
