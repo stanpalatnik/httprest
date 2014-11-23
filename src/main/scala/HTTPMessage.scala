@@ -5,11 +5,13 @@ sealed trait HTTPMessage
 
 case class HTTPRequest(connection: Socket) extends HTTPMessage
 
-case class HTTPResponse(response: String) extends HTTPMessage
+case class HTTPResponse(response: ResponseText) extends HTTPMessage
+
+case class ResponseText(text: String) extends HTTPMessage
 
 object HTTPResponse {
-  def apply(str: Stream[String]): HTTPResponse = {
-    val words = str.mkString.split(" ")
+  def apply(str: String): HTTPResponse = {
+    val words = str.split(" ")
     val wordCount = words.length
     val wordMap = words.foldLeft( Map[String, Int]() ) {
       (accumulator, currentWord) =>

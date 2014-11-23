@@ -7,9 +7,9 @@ class ClientActor extends Actor {
   def receive = {
     case HTTPRequest(socket) => {
       val in = new BufferedSource(socket.getInputStream)
-      val strStream = Stream.continually(in.bufferedReader().readLine).takeWhile(validLine)
+      val requestStr = Stream.continually(in.bufferedReader().readLine).takeWhile(validLine).mkString
       val out = new PrintStream(socket.getOutputStream)
-      val response = getResponse(strStream)
+      val response = getResponse(requestStr)
       out.println(response.response)
       socket.close()
     }
@@ -19,15 +19,28 @@ class ClientActor extends Actor {
     line != null && line.length > 0
   }
 
-  def getResponse(requestStrStream: Stream[String]): HTTPResponse = {
-      val key = SecurityUtil.md5(requestStrStream.mkString)
+  def getResponse(requestStr: String): HTTPResponse = {
+      val key = SecurityUtil.md5(requestStr)
       RequestCache.get(key) match {
         case Some(reply) => reply
         case None        =>  {
-          val response = HTTPResponse(requestStrStream)
+          val response = HTTPResponse(requestStr)
           RequestCache.put(key, response)
           response
         }
       }
+  }
+
+  def readRequest(in: BufferedSource): String = {
+    val request = new StringBuilder
+    val reader = in.bufferedReader()
+    var continue = true
+    while(continue) {
+      val line = reader.readLine()
+      if(line != null && line.length > 0)
+        request.append(reader.readLine())
+      else continue = false
+    }
+    request.toString()
   }
 }
