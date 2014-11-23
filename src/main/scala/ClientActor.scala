@@ -16,7 +16,7 @@ class ClientActor extends Actor {
   }
 
   def validLine(line: String): Boolean = {
-    val valid = line.length > 0
+    val valid = line != null && line.length > 0
     valid
   }
 
