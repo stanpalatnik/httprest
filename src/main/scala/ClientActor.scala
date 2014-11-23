@@ -16,8 +16,7 @@ class ClientActor extends Actor {
   }
 
   def validLine(line: String): Boolean = {
-    val valid = line != null && line.length > 0
-    valid
+    line != null && line.length > 0
   }
 
   def getResponse(requestStrStream: Stream[String]): HTTPResponse = {
