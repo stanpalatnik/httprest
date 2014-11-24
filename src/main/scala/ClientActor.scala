@@ -1,22 +1,27 @@
-import java.io.PrintStream
+import java.io.{InvalidObjectException, PrintWriter}
 import akka.actor.Actor
 import scala.io.BufferedSource
 
 class ClientActor extends Actor {
-
+  final val httpSeperator = "\r\n\r\n"
+  final val maxSize = 10000000
   def receive = {
     case HTTPRequest(socket) => {
       val in = new BufferedSource(socket.getInputStream)
-      val requestStr = Stream.continually(in.bufferedReader().readLine).takeWhile(validLine).mkString
-      val out = new PrintStream(socket.getOutputStream)
-      val response = getResponse(requestStr)
+      val requestStr = in.mkString
+      val bodyContent = requestStr.substring(requestStr.indexOf(httpSeperator)+4)
+      val fileContent = bodyContent.substring(bodyContent.indexOf(httpSeperator)+4, bodyContent.lastIndexOf(httpSeperator))
+      if(requestStr.length > maxSize) throw new Exception("File Size is greater than 10MB")
+      val filteredFileContent = filterSpecialCharacters(fileContent)
+      val out = new PrintWriter(socket.getOutputStream, true)
+      val response = getResponse(filteredFileContent)
       out.println(response.response)
       socket.close()
     }
   }
 
-  def validLine(line: String): Boolean = {
-    line != null && line.length > 0
+  def filterSpecialCharacters(str: String): String = {
+    str.replaceAll("[-+.^:,]()","")
   }
 
   def getResponse(requestStr: String): HTTPResponse = {
@@ -29,18 +34,5 @@ class ClientActor extends Actor {
           response
         }
       }
-  }
-
-  def readRequest(in: BufferedSource): String = {
-    val request = new StringBuilder
-    val reader = in.bufferedReader()
-    var continue = true
-    while(continue) {
-      val line = reader.readLine()
-      if(line != null && line.length > 0)
-        request.append(reader.readLine())
-      else continue = false
-    }
-    request.toString()
   }
 }

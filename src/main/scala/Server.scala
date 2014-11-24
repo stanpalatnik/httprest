@@ -5,7 +5,7 @@ import java.security.MessageDigest
 
 object Server extends App {
   final val NUM_OF_WORKERS = 10
-  final val SERVER_PORT = 8083
+  final val SERVER_PORT = 8082
 
   val system = ActorSystem("httprest")
 

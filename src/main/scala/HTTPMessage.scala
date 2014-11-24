@@ -11,7 +11,7 @@ case class ResponseText(text: String) extends HTTPMessage
 
 object HTTPResponse {
   def apply(str: String): HTTPResponse = {
-    val words = str.split(" ")
+    val words = str.split("\\s+").map(_.trim).filter(_.length > 0)
     val wordCount = words.length
     val wordMap = words.foldLeft( Map[String, Int]() ) {
       (accumulator, currentWord) =>
@@ -21,9 +21,9 @@ object HTTPResponse {
     responseBuilder.append("Word Count: ").append(wordCount).append(" and the word breakdown is: ")
     for((word, count) <- wordMap) {
       responseBuilder.append("Word: ").append(word).append(" appeared: ")
-        .append(count).append("times.").append("\n")
+        .append(count).append(" times.").append("\n")
     }
-    HTTPResponse(responseBuilder.toString())
+    HTTPResponse(ResponseText(responseBuilder.toString()))
   }
 }
 
