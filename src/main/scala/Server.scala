@@ -1,7 +1,6 @@
 import java.net.ServerSocket
 import akka.actor.{Props, ActorSystem}
 import akka.routing.RoundRobinRouter
-import java.security.MessageDigest
 
 object Server extends App {
   final val NUM_OF_WORKERS = 10
